@@ -56,10 +56,10 @@ jobs:
           apt-get install -y libx11-dev libgdk-pixbuf2.0-0 libnspr4 libnss3  # Install dependencies for Chrome
 
       # Run Selenium tests using Maven in the "automation" directory
-      - name: Compile and run FirstPageTest
+      - name: Compile and run FirstPage
         run: |
           cd automation  # Navigate into the "automation" repo
-          mvn clean test  # Run the specific test class
+          mvn clean test -Dtest=React_App.Testing.FirstPage  # Run the specific test class
 
       # Fail the workflow if tests fail
       - name: Check test results
