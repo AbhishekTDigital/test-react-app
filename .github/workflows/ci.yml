@@ -52,11 +52,6 @@ jobs:
           cd automation  # Navigate into the "automation" repo
           mvn clean test
 
-      # List Surefire report files to confirm if reports are generated
-      - name: List Surefire report files
-        run: |
-          ls -R target/surefire-reports/  # List all files in the target/surefire-reports directory
-
       # Fail the workflow if tests fail
       - name: Check test results
         run: |
