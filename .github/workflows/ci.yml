@@ -3,7 +3,11 @@ name: Run Selenium Tests
 on:
   push:
     branches:
-      - main  # Trigger action for PRs targeting the staging branch
+      - main  # Trigger action for PRs targeting the main branch
+      - 'feature/*'  # Trigger for any feature branch as well
+  pull_request:
+    branches:
+      - main  # Trigger for PRs targeting the main branch
 
 jobs:
   test:
@@ -15,11 +19,11 @@ jobs:
         uses: actions/checkout@v2
 
       # Checkout the repository containing the tests
-      - name: Checkout tests repository
+      - name: Checkout the automation repository
         uses: actions/checkout@v2
         with:
           repository: "AbhishekTDigital/automation"
-          path: tests  # This will place the tests code in the "tests" directory
+          path: automation  # Clone the automation repository in the "automation" directory
 
       # Set up Java (Maven needs JDK to run)
       - name: Set up JDK 11
@@ -37,6 +41,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Run Selenium tests using Maven in the "tests" directory
-      - name: Run tests with Maven
-        run: mvn clean test -f ./tests/pom.xml  # Use the correct path to the pom.xml file in the tests repo
+      # Compile and run the specific test (FirstPageTest.class)
+      - name: Compile and run FirstPageTest
+        run: |
+          cd automation  # Navigate into the "automation" repo
+          mvn clean test -Dtest=React_App.Testing.FirstPageTest  # Compile and run the specific test
+
+      # Fail the workflow if tests fail
+      - name: Check test results
+        run: |
+          if [ $? -ne 0 ]; then
+            echo "Tests failed. Exiting workflow."
+            exit 1
+          fi
+        shell: bash
