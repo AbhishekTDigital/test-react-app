@@ -1,4 +1,4 @@
-name: Run Selenium Tests
+name: Run Selenium Tests with Headless Chrome
 
 on:
   push:
@@ -25,11 +25,6 @@ jobs:
           repository: "AbhishekTDigital/automation"
           path: automation  # Clone the automation repository in the "automation" directory
 
-      # List files in the cloned automation directory for debugging
-      - name: List files in the cloned automation directory
-        run: |
-          ls -R automation  # List all files recursively in the automation directory
-
       # Set up Java (Maven needs JDK to run)
       - name: Set up JDK 11
         uses: actions/setup-java@v2
@@ -46,11 +41,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Compile and run FirstPageTest (using full package and class name)
+      # Set up Chrome and ChromeDriver for Selenium tests
+      - name: Set up Headless Chrome
+        uses: actions/setup-chromium@v2
+        with:
+          chromium-version: 'latest'  # Set the latest stable version of Chromium
+          chrome-driver-version: 'latest'  # Set the latest version of ChromeDriver
+
+      # Set up environment variables for Selenium to use Chrome in headless mode
+      - name: Set up display for headless Chrome
+        run: |
+          export DISPLAY=:99.0
+          Xvfb :99 &  # Set up the virtual display (Xvfb)
+          apt-get install -y libx11-dev libgdk-pixbuf2.0-0 libnspr4 libnss3  # Install dependencies for Chrome
+
+      # Run Selenium tests using Maven in the "automation" directory
       - name: Compile and run FirstPageTest
         run: |
           cd automation  # Navigate into the "automation" repo
-          mvn clean test
+          mvn clean test  # Run the specific test class
 
       # Fail the workflow if tests fail
       - name: Check test results
