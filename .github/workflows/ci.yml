@@ -3,7 +3,11 @@ name: Run Selenium Tests
 on:
   push:
     branches:
-      - main  # Trigger action for PRs targeting the staging branch
+      - main  # Trigger action for PRs targeting the main branch
+      - 'feature/*'  # Trigger for any feature branch as well
+  pull_request:
+    branches:
+      - main  # Trigger for PRs targeting the main branch
 
 jobs:
   test:
