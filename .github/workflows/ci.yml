@@ -41,6 +41,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      # Install dependencies and start the React app (or your app)
+      - name: Install dependencies and start React app
+        run: |
+          cd automation  # Navigate into the "automation" repo
+          npm install  # Install dependencies (you may need to install npm if not present)
+          npm run dev &  # Run the React app in the background (or your app's start command)
+
+      # Wait for the server to start (or use a tool like `wait-on` to ensure it's available)
+      - name: Wait for server to be ready
+        run: |
+          sleep 15  # Wait for 10 seconds for the app to start, adjust as necessary
+
       # Set up Headless Chrome using google-chrome-stable and chromedriver
       - name: Set up Headless Chrome and ChromeDriver
         run: |
@@ -55,11 +67,10 @@ jobs:
           export CHROMEDRIVER_PATH=/usr/lib/chromium-browser/chromedriver
 
       # Run Selenium tests using Maven in the "automation" directory
-      - name: Compile and run FirstPageTest
+      - name: Compile and run FirstPage
         run: |
           cd automation  # Navigate into the "automation" repo
           mvn clean test
-
 
       # Fail the workflow if tests fail
       - name: Check test results
