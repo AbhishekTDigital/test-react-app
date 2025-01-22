@@ -39,4 +39,4 @@ jobs:
 
       # Run Selenium tests using Maven in the "tests" directory
       - name: Run tests with Maven
-        run: mvn clean test -f ./tests/pom.xml  # Use the correct path to the pom.xml file in the tests repo
+        run: mvn clean test -f ./tests/pom.xml -DskipTests=false  # Use the correct path to the pom.xml file in the tests repo
