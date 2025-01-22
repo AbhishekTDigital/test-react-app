@@ -1,4 +1,4 @@
-name: Run Selenium Tests
+name: Run Selenium Tests with Headless Chrome
 
 on:
   push:
@@ -41,11 +41,36 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Compile and run the specific test (FirstPageTest.class)
-      - name: Compile and run FirstPageTest
+      # Install dependencies and start the React app (or your app)
+      - name: Install dependencies and start React app
         run: |
           cd automation  # Navigate into the "automation" repo
-          mvn clean test -Dtest=React_App.Testing.FirstPageTest  # Compile and run the specific test
+          npm install  # Install dependencies (you may need to install npm if not present)
+          npm run dev &  # Run the React app in the background (or your app's start command)
+
+      # Wait for the server to start (or use a tool like `wait-on` to ensure it's available)
+      - name: Wait for server to be ready
+        run: |
+          sleep 15  # Wait for 10 seconds for the app to start, adjust as necessary
+
+      # Set up Headless Chrome using google-chrome-stable and chromedriver
+      - name: Set up Headless Chrome and ChromeDriver
+        run: |
+          # Install dependencies
+          sudo apt-get update -y
+          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y chromium-chromedriver
+          sudo apt-get install -y libx11-dev libgdk-pixbuf2.0-0 libnspr4 libnss3
+
+          # Set CHROME_BIN and CHROMEDRIVER_PATH for selenium
+          export CHROME_BIN=/usr/bin/google-chrome-stable
+          export CHROMEDRIVER_PATH=/usr/lib/chromium-browser/chromedriver
+
+      # Run Selenium tests using Maven in the "automation" directory
+      - name: Compile and run FirstPage
+        run: |
+          cd automation  # Navigate into the "automation" repo
+          mvn clean test
 
       # Fail the workflow if tests fail
       - name: Check test results
