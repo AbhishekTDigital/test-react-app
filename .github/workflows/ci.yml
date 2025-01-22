@@ -45,7 +45,7 @@ jobs:
       - name: Compile and run FirstPage
         run: |
           cd automation  # Navigate into the "automation" repo
-          mvn clean test -Dtest=React_App.Testing.FirstPage  # Compile and run the specific test
+          mvn clean test
 
       # Fail the workflow if tests fail
       - name: Check test results
