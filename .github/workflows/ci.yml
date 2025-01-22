@@ -41,25 +41,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Set up Chrome and ChromeDriver for Selenium tests
-      - name: Set up Headless Chrome
-        uses: actions/setup-chromium@v2
-        with:
-          chromium-version: 'latest'  # Set the latest stable version of Chromium
-          chrome-driver-version: 'latest'  # Set the latest version of ChromeDriver
-
-      # Set up environment variables for Selenium to use Chrome in headless mode
-      - name: Set up display for headless Chrome
+      # Set up Headless Chrome using google-chrome-stable and chromedriver
+      - name: Set up Headless Chrome and ChromeDriver
         run: |
-          export DISPLAY=:99.0
-          Xvfb :99 &  # Set up the virtual display (Xvfb)
-          apt-get install -y libx11-dev libgdk-pixbuf2.0-0 libnspr4 libnss3  # Install dependencies for Chrome
+          # Install dependencies
+          sudo apt-get update -y
+          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y chromium-chromedriver
+          sudo apt-get install -y libx11-dev libgdk-pixbuf2.0-0 libnspr4 libnss3
+
+          # Set CHROME_BIN and CHROMEDRIVER_PATH for selenium
+          export CHROME_BIN=/usr/bin/google-chrome-stable
+          export CHROMEDRIVER_PATH=/usr/lib/chromium-browser/chromedriver
 
       # Run Selenium tests using Maven in the "automation" directory
-      - name: Compile and run FirstPage
+      - name: Compile and run FirstPageTest
         run: |
           cd automation  # Navigate into the "automation" repo
-          mvn clean test -Dtest=React_App.Testing.FirstPage  # Run the specific test class
+          mvn clean test
+
 
       # Fail the workflow if tests fail
       - name: Check test results
