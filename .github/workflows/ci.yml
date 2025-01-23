@@ -51,7 +51,7 @@ jobs:
       # Wait for the server to start (or use a tool like `wait-on` to ensure it's available)
       - name: Wait for server to be ready
         run: |
-          sleep 15  # Wait for 10 seconds for the app to start, adjust as necessary
+          sleep 15  # Wait for 15 seconds for the app to start, adjust as necessary
 
       # Set up Headless Chrome using google-chrome-stable and chromedriver
       - name: Set up Headless Chrome and ChromeDriver
@@ -71,6 +71,14 @@ jobs:
         run: |
           cd automation  # Navigate into the "automation" repo
           mvn clean test
+
+      # Display test results with more detail
+      - name: Show detailed test results
+        run: |
+          cd automation
+          if [ -d "target/surefire-reports" ]; then
+            cat target/surefire-reports/*.txt  # Show detailed test logs
+          fi
 
       # Fail the workflow if tests fail
       - name: Check test results
